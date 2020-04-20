@@ -4,11 +4,9 @@ const productoNombre = document.querySelector("#productoNombre")
 const productoDescripcion = document.querySelector("#productoDescripcion")
 const productosListas = document.querySelector("#productosListas")
 
-const {
-    ipcRenderer
-} = require("electron")
+const {ipcRenderer} = require("electron")
 
-let productosGlobal = [];
+
 let actulizarStatus = false;
 let idProductoActulizado = "";
 
@@ -26,7 +24,6 @@ function eliminarProducto(id) {
 
 
 }
-
 //  fuction editar
 /*
 function editTask(id) {
@@ -38,12 +35,11 @@ function editTask(id) {
 }
  */
 function editarProducto(id) {
+    actulizarStatus = true;
     idProductoActulizado = id;
-    const productoEncontrado = productosGlobal.find(prod => prodproductoEncontrado._id === id);
+    const productoEncontrado = productosGlobal.find(prod => prod._id === id);
     productoNombre.value = productoEncontrado.nombre;
     productoDescripcion.value = productoEncontrado.descripcion;
-
-    actulizarStatus = true
     console.log(id);
 }
 // function para los lista de productos
@@ -67,6 +63,7 @@ function renderProductos(productos) {
 
     });
 }
+let productosGlobal = [];
 
 
 productoFormulario.addEventListener("submit", evento => {
@@ -94,7 +91,10 @@ productoFormulario.addEventListener("submit", evento => {
         ipcRenderer.send("nuevo-producto", producto);
 
     } else {
-        ipcRenderer.send("editar-producto", {...producto, id });
+        
+        
+        ipcRenderer.send("editar-producto", {...producto, idProductoActulizado });
+        
 
 
     }
@@ -102,6 +102,8 @@ productoFormulario.addEventListener("submit", evento => {
 
 
     productoFormulario.reset()
+    productoNombre.focus();
+    actulizarStatus = false
 });
 
 ipcRenderer.on("nuevo-producto-creado", (e, args) => {
@@ -111,16 +113,19 @@ ipcRenderer.on("nuevo-producto-creado", (e, args) => {
     renderProductos(productosGlobal)
     console.log(productoNuevo);
     alert("Productos Creado Satisfactoriamente !!")
+    productoNombre.focus();
 });
 ipcRenderer.send("lista-productos");
 
-ipcRenderer.on("envio-lista-produstos", (e, args) => {
+ipcRenderer.on("envio-lista-productos", (e, args) => {
+    productoNombre.focus();
     const productos = JSON.parse(args);
     //console.log(productos);
     // la paso al estado o la variable global
     productosGlobal = productos
     renderProductos(productosGlobal);
 });
+
 ipcRenderer.on("eliminado-producto-exitoso", (e, args) => {
 console.log(args);
 const productoEliminado = JSON.parse(args);
@@ -133,4 +138,20 @@ renderProductos(productosGlobal);
 
 });
 
-});
+ipcRenderer.on("actulizado-producto-existoso", (e, args) => {
+    productoNombre.focus();
+    console.log(args);
+    const actulizadoProducto = JSON.parse(args);
+    productosGlobal.map(p=> {
+        if (p._id === actulizadoProducto._id){
+            p.nombre = actulizadoProducto.nombre;
+            p.descripcion = actulizadoProducto.descripcion
+          }
+          return p;
+        
+
+    });
+    renderProductos(productosGlobal)
+
+
+})

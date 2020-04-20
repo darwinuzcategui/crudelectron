@@ -28,7 +28,7 @@ ipcMain.on("lista-productos", async(e, args) => {
     const productos = await Producto.find();
     console.log(productos);
     // envio la lista de productos
-    e.reply("envio-lista-produstos", JSON.stringify(productos))
+    e.reply("envio-lista-productos", JSON.stringify(productos))
 });
 // escuchamos el evento eliminar
 ipcMain.on("eliminar-producto", async(e, args) => {
@@ -36,6 +36,16 @@ ipcMain.on("eliminar-producto", async(e, args) => {
     const productoEliminado = await Producto.findByIdAndDelete(args)
     e.reply("eliminado-producto-exitoso", JSON.stringify(productoEliminado));
 
+});
+ipcMain.on("editar-producto", async (e, args) => {
+    console.log(args);
+    const actulizadoProducto = await Producto.findByIdAndUpdate(
+        args.idProductoActulizado, {
+            nombre:args.nombre,
+            descripcion: args.descripcion},
+            {new:true}
+    );
+    e.reply("actulizado-producto-existoso",JSON.stringify(actulizadoProducto));
 });
 
 module.exports = { createWindow };
