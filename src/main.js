@@ -39,3 +39,4 @@ ipcMain.on("eliminar-producto", async(e, args) => {
 });
 
 module.exports = { createWindow };
+// commit prueba desde q linux
