@@ -41,12 +41,11 @@ function renderProductos(productos) {
         productosListas.innerHTML += `
         <li class="card">
         <h4>
-        Productos Id ${listProductos._id}
+        Productos Nombre: ${listProductos.nombre}
         </h4>
-        <p>Productos Nombre: ${listProductos.nombre}</p>
         <p>Descripcion Prod: ${listProductos.descripcion}</p>
         <button class="btn btn-danger" onclick="eliminarProducto('${listProductos._id}')">
-        🗑 Delete
+        ❎ Eliminar
         </button>
         <button class="btn btn-secondary" onclick="editarProducto('${listProductos._id}')">
         ✎ Editar
@@ -69,15 +68,7 @@ productoFormulario.addEventListener("submit", evento => {
         descripcion: productoDescripcion.value
     }
 
-    /*
-     console.log(updateStatus);
-
-  if (!updateStatus) {
-    ipcRenderer.send("new-task", task);
-  } else {
-    ipcRenderer.send("update-task", { ...task, idTaskToUpdate });
-  }
-     */
+   
     console.log(actulizarStatus);
 
     if (!actulizarStatus) {
