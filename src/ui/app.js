@@ -4,7 +4,7 @@ const productoNombre = document.querySelector("#productoNombre")
 const productoDescripcion = document.querySelector("#productoDescripcion")
 const productosListas = document.querySelector("#productosListas")
 
-const {ipcRenderer} = require("electron")
+const { ipcRenderer } = require("electron")
 
 
 let actulizarStatus = false;
@@ -25,15 +25,6 @@ function eliminarProducto(id) {
 
 }
 //  fuction editar
-/*
-function editTask(id) {
-  updateStatus = true;
-  idTaskToUpdate = id;
-  const task = tasks.find(task => task._id === id);
-  taskName.value = task.name;
-  taskDescription.value = task.description;
-}
- */
 function editarProducto(id) {
     actulizarStatus = true;
     idProductoActulizado = id;
@@ -48,14 +39,17 @@ function renderProductos(productos) {
     console.log(productos);
     productos.map(listProductos => {
         productosListas.innerHTML += `
-        <li><h4>Productos Id ${listProductos._id}</h4>
+        <li class="card">
+        <h4>
+        Productos Id ${listProductos._id}
+        </h4>
         <p>Productos Nombre: ${listProductos.nombre}</p>
         <p>Descripcion Prod: ${listProductos.descripcion}</p>
-        <button onclick="eliminarProducto('${listProductos._id}')">
-        Eliminar
+        <button class="btn btn-danger" onclick="eliminarProducto('${listProductos._id}')">
+        🗑 Delete
         </button>
-        <button onclick="editarProducto('${listProductos._id}')">
-        Editar
+        <button class="btn btn-secondary" onclick="editarProducto('${listProductos._id}')">
+        ✎ Editar
         </button>
         
         </li>
@@ -91,10 +85,10 @@ productoFormulario.addEventListener("submit", evento => {
         ipcRenderer.send("nuevo-producto", producto);
 
     } else {
-        
-        
+
+
         ipcRenderer.send("editar-producto", {...producto, idProductoActulizado });
-        
+
 
 
     }
@@ -127,13 +121,13 @@ ipcRenderer.on("envio-lista-productos", (e, args) => {
 });
 
 ipcRenderer.on("eliminado-producto-exitoso", (e, args) => {
-console.log(args);
-const productoEliminado = JSON.parse(args);
-const nuevosProdutos = productosGlobal.filter(unProdu => {
-    return unProdu._id !== productoEliminado._id;
-});
-productosGlobal = nuevosProdutos;
-renderProductos(productosGlobal);
+    console.log(args);
+    const productoEliminado = JSON.parse(args);
+    const nuevosProdutos = productosGlobal.filter(unProdu => {
+        return unProdu._id !== productoEliminado._id;
+    });
+    productosGlobal = nuevosProdutos;
+    renderProductos(productosGlobal);
 
 
 });
@@ -142,13 +136,13 @@ ipcRenderer.on("actulizado-producto-existoso", (e, args) => {
     productoNombre.focus();
     console.log(args);
     const actulizadoProducto = JSON.parse(args);
-    productosGlobal.map(p=> {
-        if (p._id === actulizadoProducto._id){
+    productosGlobal.map(p => {
+        if (p._id === actulizadoProducto._id) {
             p.nombre = actulizadoProducto.nombre;
             p.descripcion = actulizadoProducto.descripcion
-          }
-          return p;
-        
+        }
+        return p;
+
 
     });
     renderProductos(productosGlobal)
