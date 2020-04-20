@@ -7,7 +7,10 @@ const productosListas = document.querySelector("#productosListas")
 const {
     ipcRenderer
 } = require("electron")
+
 let productosGlobal = [];
+let actulizarStatus = false;
+let idProductoActulizado = "";
 
 // funcuion para probar un click
 function eliminarProducto(id) {
@@ -23,8 +26,27 @@ function eliminarProducto(id) {
 
 
 }
-// function para los lista de productos
 
+//  fuction editar
+/*
+function editTask(id) {
+  updateStatus = true;
+  idTaskToUpdate = id;
+  const task = tasks.find(task => task._id === id);
+  taskName.value = task.name;
+  taskDescription.value = task.description;
+}
+ */
+function editarProducto(id) {
+    idProductoActulizado = id;
+    const productoEncontrado = productosGlobal.find(prod => prodproductoEncontrado._id === id);
+    productoNombre.value = productoEncontrado.nombre;
+    productoDescripcion.value = productoEncontrado.descripcion;
+
+    actulizarStatus = true
+    console.log(id);
+}
+// function para los lista de productos
 function renderProductos(productos) {
     productosListas.innerHTML = "";
     console.log(productos);
@@ -36,7 +58,7 @@ function renderProductos(productos) {
         <button onclick="eliminarProducto('${listProductos._id}')">
         Eliminar
         </button>
-        <button>
+        <button onclick="editarProducto('${listProductos._id}')">
         Editar
         </button>
         
@@ -56,8 +78,29 @@ productoFormulario.addEventListener("submit", evento => {
         descripcion: productoDescripcion.value
     }
 
+    /*
+     console.log(updateStatus);
 
-    ipcRenderer.send("nuevo-producto", producto);
+  if (!updateStatus) {
+    ipcRenderer.send("new-task", task);
+  } else {
+    ipcRenderer.send("update-task", { ...task, idTaskToUpdate });
+  }
+     */
+    console.log(actulizarStatus);
+
+    if (!actulizarStatus) {
+
+        ipcRenderer.send("nuevo-producto", producto);
+
+    } else {
+        ipcRenderer.send("editar-producto", {...producto, id });
+
+
+    }
+
+
+
     productoFormulario.reset()
 });
 
@@ -79,7 +122,15 @@ ipcRenderer.on("envio-lista-produstos", (e, args) => {
     renderProductos(productosGlobal);
 });
 ipcRenderer.on("eliminado-producto-exitoso", (e, args) => {
-    console.log(args);
-    const productoEliminado = JSON.parse(args);
+console.log(args);
+const productoEliminado = JSON.parse(args);
+const nuevosProdutos = productosGlobal.filter(unProdu => {
+    return unProdu._id !== productoEliminado._id;
+});
+productosGlobal = nuevosProdutos;
+renderProductos(productosGlobal);
+
+
+});
 
 });
